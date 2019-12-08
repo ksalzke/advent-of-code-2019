@@ -71,7 +71,6 @@ def run_intcode(intcode, amp_input, phase_setting, pos=0, inputs_entered=0):
         elif opcode == 4:
             # outputs the value of its only parameter
             pos += 2
-            print(intcode_list[first], intcode_list, pos, inputs_entered)
             return intcode_list[first], intcode_list, pos, inputs_entered, False
         elif opcode == 5:
             # if first parameter non-zero, set instruction pointer to value from second parameter
@@ -105,7 +104,6 @@ def run_intcode(intcode, amp_input, phase_setting, pos=0, inputs_entered=0):
             return
         instruction = str(intcode_list[pos])
         opcode = int(instruction[-2:])
-    print("finished")
     return amp_input, intcode_list, pos, inputs_entered, True
 
 
@@ -122,29 +120,27 @@ def test_setting(param):
     c_current_state = data
     d_current_state = data
     e_current_state = data
+    a_pos = 0
+    b_pos = 0
+    c_pos = 0
+    d_pos = 0
     e_pos = 0
+    a_inputs_entered = 0
+    b_inputs_entered = 0
+    c_inputs_entered = 0
+    d_inputs_entered = 0
     e_inputs_entered = 0
     while finished is False:
         a_output, a_current_state, a_pos, a_inputs_entered, finished = run_intcode(
-            a_current_state, e_output, param[0], e_pos, e_inputs_entered)
-        print("a has run")
-        # print(a_output)
+            a_current_state, e_output, param[0], a_pos, a_inputs_entered)
         b_output, b_current_state, b_pos, b_inputs_entered, finished = run_intcode(
-            b_current_state, a_output, param[1], a_pos, a_inputs_entered)
-        print("b has run")
-        # print(b_output)
+            b_current_state, a_output, param[1], b_pos, b_inputs_entered)
         c_output, c_current_state, c_pos, c_inputs_entered, finished = run_intcode(
-            c_current_state, b_output, param[2], b_pos, b_inputs_entered)
-        print("c has run")
-        # print(c_output)
+            c_current_state, b_output, param[2], c_pos, c_inputs_entered)
         d_output, d_current_state, d_pos, d_inputs_entered, finished = run_intcode(
-            d_current_state, c_output, param[3], c_pos, c_inputs_entered)
-        print("d has run")
-        # print(d_output)
+            d_current_state, c_output, param[3], d_pos, d_inputs_entered)
         e_output, e_current_state, e_pos, e_inputs_entered, finished = run_intcode(
-            e_current_state, d_output, param[4], d_pos, d_inputs_entered)
-        print("e has run")
-        # print(e_output)
+            e_current_state, d_output, param[4], e_pos, e_inputs_entered)
     return e_output
 
 
