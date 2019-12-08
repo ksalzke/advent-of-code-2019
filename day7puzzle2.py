@@ -61,7 +61,7 @@ def run_intcode(intcode, amp_input, phase_setting, pos=0, inputs_entered=0):
             # takes a single integer as input and saves it to the position given by its only parameter
             if inputs_entered == 0:
                 calculated_value = phase_setting
-            elif inputs_entered == 1:
+            elif inputs_entered > 0:
                 calculated_value = amp_input
             else:
                 calculated_value = int(input("Enter input: "))
@@ -71,7 +71,8 @@ def run_intcode(intcode, amp_input, phase_setting, pos=0, inputs_entered=0):
         elif opcode == 4:
             # outputs the value of its only parameter
             pos += 2
-            return intcode_list[first]
+            print(intcode_list[first], intcode_list, pos, inputs_entered)
+            return intcode_list[first], intcode_list, pos, inputs_entered, False
         elif opcode == 5:
             # if first parameter non-zero, set instruction pointer to value from second parameter
             if intcode_list[first] != 0:
@@ -104,25 +105,57 @@ def run_intcode(intcode, amp_input, phase_setting, pos=0, inputs_entered=0):
             return
         instruction = str(intcode_list[pos])
         opcode = int(instruction[-2:])
+    print("finished")
+    return amp_input, intcode_list, pos, inputs_entered, True
+
+
+data = "3, 26, 1001, 26, -4, 26, 3, 27, 1002, 27, 2, 27, 1, 27, 26, 27, 4, 27, 1001, 28, -1, 28, 1005, 28, 6, 99, 0, 0, 5"
 
 
 def test_setting(param):
-    data = "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5"
-    # data = "3,8,1001,8,10,8,105,1,0,0,21,42,67,88,101,114,195,276,357,438,99999,3,9,101,3,9,9,1002,9,4,9,1001,9,5,9,102,4,9,9,4,9,99,3,9,1001,9,3,9,1002,9,2,9,101,2,9,9,102,2,9,9,1001,9,5,9,4,9,99,3,9,102,4,9,9,1001,9,3,9,102,4,9,9,101,4,9,9,4,9,99,3,9,101,2,9,9,1002,9,3,9,4,9,99,3,9,101,4,9,9,1002,9,5,9,4,9,99,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,99,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,99,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,1,9,4,9,99,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,99"
-    a = run_intcode(data, 0, param[0])
-    b = run_intcode(data, a, param[1])
-    c = run_intcode(data, b, param[2])
-    d = run_intcode(data, c, param[3])
-    e = run_intcode(data, d, param[4])
-    return e
+    global data
+    finished = False
+    # starting values for first run
+    e_output = 0
+    a_current_state = data
+    b_current_state = data
+    c_current_state = data
+    d_current_state = data
+    e_current_state = data
+    e_pos = 0
+    e_inputs_entered = 0
+    while finished is False:
+        a_output, a_current_state, a_pos, a_inputs_entered, finished = run_intcode(
+            a_current_state, e_output, param[0], e_pos, e_inputs_entered)
+        print("a has run")
+        # print(a_output)
+        b_output, b_current_state, b_pos, b_inputs_entered, finished = run_intcode(
+            b_current_state, a_output, param[1], a_pos, a_inputs_entered)
+        print("b has run")
+        # print(b_output)
+        c_output, c_current_state, c_pos, c_inputs_entered, finished = run_intcode(
+            c_current_state, b_output, param[2], b_pos, b_inputs_entered)
+        print("c has run")
+        # print(c_output)
+        d_output, d_current_state, d_pos, d_inputs_entered, finished = run_intcode(
+            d_current_state, c_output, param[3], c_pos, c_inputs_entered)
+        print("d has run")
+        # print(d_output)
+        e_output, e_current_state, e_pos, e_inputs_entered, finished = run_intcode(
+            e_current_state, d_output, param[4], d_pos, d_inputs_entered)
+        print("e has run")
+        # print(e_output)
+    return e_output
 
 
-possible_params = list(itertools.permutations([0, 1, 2, 3, 4]))
+print(test_setting([9, 8, 7, 6, 5]))
 
-max_output = 0
-for setting in possible_params:
-    output = test_setting(setting)
-    if output > max_output:
-        max_output = output
+# possible_params = list(itertools.permutations([0, 1, 2, 3, 4]))
 
-print(max_output)
+#max_output = 0
+# for setting in possible_params:
+#    output = test_setting(setting)
+#    if output > max_output:
+#        max_output = output
+
+# print(max_output)
